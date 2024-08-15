@@ -1,51 +1,52 @@
 #!/usr/bin/python3
-"""
-Reads from stdin, parses logs, and computes metrics:
-- Total file size.
-- Count of specific HTTP status codes (200, 301, 400, 401, 403, 404, 405, 500).
-Prints stats every 10 lines or on keyboard interruption.
-"""
+"""Script that reads stdin line by line and computes metrics."""
 
 import sys
 
-total_size = 0
-status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
+# Dictionary to store the count of all status codes
+status_count = {
+    '200': 0, '301': 0, '400': 0, '401': 0, '403': 0,
+    '404': 0, '405': 0, '500': 0
+}
 
-
-def print_stats():
-    """Prints total file size and status code counts."""
-    print(f"File size: {total_size}")
-    for code in sorted(status_codes.keys()):
-        if status_codes[code] > 0:
-            print(f"{code}: {status_codes[code]}")
-
+total_file_size = 0
+line_counter = 0  # Keep track of the number of lines processed
 
 try:
-    for line in sys.stdin:
-        line_count += 1
-        parts = line.split()
+    for log_line in sys.stdin:
+        log_parts = log_line.split()
 
-        if len(parts) > 6:
-            status_code = parts[-2]
-            file_size = parts[-1]
+        if len(log_parts) > 6:
+            http_status = log_parts[-2]
+            file_size_str = log_parts[-1]
 
+            # Check if the status code is in the dictionary and update count
+            if http_status in status_count:
+                status_count[http_status] += 1
+
+            # Update total file size
             try:
-                total_size += int(file_size)
+                total_file_size += int(file_size_str)
             except ValueError:
                 continue
 
-            try:
-                if int(status_code) in status_codes:
-                    status_codes[int(status_code)] += 1
-            except ValueError:
-                continue
+            # Update line counter
+            line_counter += 1
 
-        if line_count % 10 == 0:
-            print_stats()
+        if line_counter == 10:
+            line_counter = 0  # Reset counter after 10 lines
+            print('File size: {}'.format(total_file_size))
+
+            # Print out status code counts
+            for code in sorted(status_count.keys()):
+                if status_count[code] != 0:
+                    print('{}: {}'.format(code, status_count[code]))
 
 except KeyboardInterrupt:
-    print_stats()
-    raise
+    pass
 
-print_stats()
+finally:
+    print('File size: {}'.format(total_file_size))
+    for code in sorted(status_count.keys()):
+        if status_count[code] != 0:
+            print('{}: {}'.format(code, status_count[code]))
