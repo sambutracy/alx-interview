@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+"""
+Reads from stdin, parses logs, and computes metrics:
+- Total file size.
+- Count of specific HTTP status codes (200, 301, 400, 401, 403, 404, 405, 500).
+Prints stats every 10 lines or on keyboard interruption.
+"""
+
 import sys
 
 total_size = 0
@@ -7,6 +14,7 @@ line_count = 0
 
 
 def print_stats():
+    """Prints total file size and status code counts."""
     print(f"File size: {total_size}")
     for code in sorted(status_codes.keys()):
         if status_codes[code] > 0:
