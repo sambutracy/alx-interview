@@ -7,6 +7,7 @@ Prints all solutions.
 
 import sys
 
+
 def isSafe(board, row, col):
     """
     isSafe: checks if a queen can be placed on board[row][col]
@@ -24,6 +25,7 @@ def isSafe(board, row, col):
         if board[c] == row or abs(c - col) == abs(board[c] - row):
             return False
     return True
+
 
 def solveNQueens(N):
     """
@@ -52,6 +54,7 @@ def solveNQueens(N):
     board = [-1 for _ in range(N)]
     solveNQueensUtil(board, 0)
 
+
 def main():
     """
     Main function to parse input arguments and solve the N Queens problem.
@@ -74,6 +77,7 @@ def main():
 
     # Start the backtracking algorithm
     solveNQueens(N)
+
 
 if __name__ == "__main__":
     main()
