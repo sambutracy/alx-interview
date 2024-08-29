@@ -65,4 +65,3 @@ def backtrack(row):
 backtrack(0)
 for solution in res:
     print(solution)
-    
