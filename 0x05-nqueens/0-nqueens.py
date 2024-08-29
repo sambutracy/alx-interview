@@ -2,7 +2,7 @@
 """
 This module solves the N Queens problem using a backtracking algorithm.
 
-The N Queens problem is about placing N queens on an N×N chessboard
+The N Queens problem is about placing N queens on an N×N chessboard 
 so that no two queens threaten each other.
 """
 
@@ -34,19 +34,17 @@ left_diagonals = set()
 def solve_nqueens(row):
     """
     Recursively place queens on the board starting from the given row.
-
+    
     This function uses backtracking to explore all possible placements
     of queens on the board while ensuring no two queens can attack each other.
     """
     if row == N:
-        solution = [[r, c] for r in range(N)
-                    for c in range(N) if board[r][c] == 1]
+        solution = [[r, c] for r in range(N) for c in range(N) if board[r][c] == 1]
         solutions.append(solution)
         return
 
     for col in range(N):
-        if col in columns or (row + col) in right_diagonals or \
-               (row - col) in left_diagonals:
+        if col in columns or (row + col) in right_diagonals or (row - col) in left_diagonals:
             continue
 
         # Place queen and update the tracking sets
