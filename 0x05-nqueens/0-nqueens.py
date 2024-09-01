@@ -30,7 +30,7 @@ def solveNQueens(n):
         for i in range(n):
             if abs(queens[i] - queens[n]) == n - i:  # same diagonal
                 return False
-            if queens[i] == queens[n]:  # same column
+            if queens[i] == queens[n]:
                 return False
         return True
 
