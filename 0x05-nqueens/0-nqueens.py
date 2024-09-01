@@ -1,30 +1,5 @@
 #!/usr/bin/python3
 """
-This module solves the N Queens problem using a backtracking algorithm.
-
-The N Queens problem is about placing N queens on an N×N chessboard
-so that no two queens threaten each other.
-"""
-
-import sys
-
-# Input validation
-if len(sys.argv) != 2:
-    print("Usage: nqueens N")
-    sys.exit(1)
-
-try:
-    N = int(sys.argv[1])
-except ValueError:
-    print("N must be a number")
-    sys.exit(1)
-
-if N < 4:
-    print("N must be at least 4")
-    sys.exit(1)
-
-#!/usr/bin/python3
-"""
 Module for 0x0C. N Queens.
 Holberton School
 Specializations - Interview Preparation ― Algorithms
@@ -93,4 +68,3 @@ if __name__ == "__main__":
         result = solveNQueens(n)
         for row in result:
             print(row)
-            
