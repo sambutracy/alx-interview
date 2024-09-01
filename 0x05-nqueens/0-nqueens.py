@@ -23,51 +23,74 @@ if N < 4:
     print("N must be at least 4")
     sys.exit(1)
 
-# Initialize the board and sets to track column and diagonal threats
-board = [[0 for _ in range(N)] for _ in range(N)]
-solutions = []
-columns = set()
-right_diagonals = set()
-left_diagonals = set()
+#!/usr/bin/python3
+"""
+Module for 0x0C. N Queens.
+Holberton School
+Specializations - Interview Preparation ― Algorithms
+"""
+from sys import argv, exit
 
 
-def solve_nqueens(row):
-    """
-    Recursively place queens on the board starting from the given row.
+def solveNQueens(n):
+    """Program that solves the N queens problem"""
+    res = []
+    queens = [-1] * n
+    # queens is a one-dimension array, like [1, 3, 0, 2] means
+    # index represents row no and value represents col no
 
-    This function uses backtracking to explore all possible placements
-    of queens on the board while ensuring no two queens can attack each other.
-    """
-    if row == N:
-        solution = [[r, c] for r in range(N)
-                    for c in range(N) if board[r][c] == 1]
-        solutions.append(solution)
-        return
+    def dfs(index):
+        """Recursively resolves the N queens problem"""
+        if index == len(queens):  # n queens have been placed correctly
+            res.append(queens[:])
+            return  # backtracking
+        for i in range(len(queens)):
+            queens[index] = i
+            if valid(index):  # pruning
+                dfs(index + 1)
 
-    for col in range(N):
-        if (col in columns or (row + col) in right_diagonals or
-                (row - col) in left_diagonals):
-            continue
+    # check whether nth queens can be placed
+    def valid(n):
+        """Method that checks if a position in the board is valid"""
+        for i in range(n):
+            if abs(queens[i] - queens[n]) == n - i:  # same diagonal
+                return False
+            if queens[i] == queens[n]:  # same column
+                return False
+        return True
 
-        # Place queen and update the tracking sets
-        board[row][col] = 1
-        columns.add(col)
-        right_diagonals.add(row + col)
-        left_diagonals.add(row - col)
+    # given queens = [1,3,0,2] this function returns
+    # [[0, 1], [1, 3], [2, 0], [3, 2]]
 
-        # Recurse to the next row
-        solve_nqueens(row + 1)
+    def make_all_boards(res):
+        """Method that builts the List that be returned"""
+        actual_boards = []
+        for queens in res:
+            board = []
+            for row, col in enumerate(queens):
+                board.append([row, col])
+            actual_boards.append(board)
+        return actual_boards
 
-        # Backtrack by removing the queen and updating the tracking sets
-        board[row][col] = 0
-        columns.remove(col)
-        right_diagonals.remove(row + col)
-        left_diagonals.remove(row - col)
+    dfs(0)
+    return make_all_boards(res)
 
 
-# Start the backtracking process from the first row
-solve_nqueens(0)
+if __name__ == "__main__":
+    if len(argv) < 2:
+        print('Usage: nqueens N')
+        exit(1)
+    try:
+        n = int(argv[1])
+    except ValueError:
+        print('N must be a number')
+        exit(1)
 
-# Print all valid solutions
-for solution in solutions:
-    print(solution)
+    if n < 4:
+        print('N must be at least 4')
+        exit(1)
+    else:
+        result = solveNQueens(n)
+        for row in result:
+            print(row)
+            
