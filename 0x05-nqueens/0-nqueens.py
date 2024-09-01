@@ -13,7 +13,7 @@ def solveNQueens(n):
 
     def dfs(index):
         """Recursively resolves the N queens problem"""
-        if index == len(queens):  # n queens have been placed correctly
+        if index == len(queens):  # n queens]placed correctly
             res.append(queens[:])
             return
         for i in range(len(queens)):
