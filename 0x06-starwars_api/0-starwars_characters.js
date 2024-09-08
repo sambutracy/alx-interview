@@ -1,49 +1,46 @@
 #!/usr/bin/node
-// Prints all characters of a Star Wars movie.
 
 const request = require('request');
-const id = process.argv[2];
-const url = `https://swapi-api.alx-tools.com/api/films/${id}/`;
 
-if (process.argv.length !== 3) {
+// Function to print character names in order
+function fetchCharacters(characters, idx) {
+  if (idx >= characters.length) {
+    return; // Base case: if the index is out of bounds, stop recursion
+  }
+
+  // Request the character details from the character URL
+  request(characters[idx], (err, response, body) => {
+    if (err) {
+      console.error(err);
+    } else if (response.statusCode === 200) {
+      const character = JSON.parse(body);
+      console.log(character.name); // Print the character's name
+      fetchCharacters(characters, idx + 1); // Recurse for the next character
+    } else {
+      console.error('Failed to retrieve character, status code:', response.statusCode);
+    }
+  });
+}
+
+// Get the Movie ID from the command-line argument
+const movieId = process.argv[2];
+if (!movieId) {
   console.error('Usage: ./0-starwars_characters.js <Movie ID>');
   process.exit(1);
 }
 
-request(url, async (err, response, body) => {
+// Construct the URL for the Star Wars API
+const url = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
+
+// Fetch the movie data based on the Movie ID
+request(url, (err, response, body) => {
   if (err) {
-    console.error('Error fetching movie:', err);
-    return;
-  }
-
-  if (response.statusCode !== 200) {
-    console.error(`Error: Received status code ${response.statusCode} when fetching movie data`);
-    return;
-  }
-
-  const charArr = JSON.parse(body).characters;
-
-  try {
-    const characterPromises = charArr.map(charUrl => {
-      return new Promise((resolve, reject) => {
-        request(charUrl, (err, response, body) => {
-          if (err) {
-            reject('Error fetching character:', err);
-          } else if (response.statusCode !== 200) {
-            reject(`Error: Received status code ${response.statusCode} when fetching character data`);
-          } else {
-            resolve(JSON.parse(body).name);
-          }
-        });
-      });
-    });
-
-    // Wait for all character names to be fetched
-    const characters = await Promise.all(characterPromises);
-
-    // Print each character name
-    characters.forEach(character => console.log(character));
-  } catch (error) {
-    console.error('Error:', error);
+    console.error(err);
+  } else if (response.statusCode === 200) {
+    const movieData = JSON.parse(body); // Parse the movie data
+    const characters = movieData.characters; // Get the list of character URLs
+    fetchCharacters(characters, 0); // Start fetching characters in order
+  } else {
+    console.error('Failed to retrieve movie, status code:', response.statusCode);
   }
 });
