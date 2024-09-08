@@ -2,45 +2,47 @@
 
 const request = require('request');
 
-// Function to print character names in order
-function fetchCharacters(characters, idx) {
-  if (idx >= characters.length) {
-    return; // Base case: if the index is out of bounds, stop recursion
-  }
-
-  // Request the character details from the character URL
-  request(characters[idx], (err, response, body) => {
-    if (err) {
-      console.error(err);
-    } else if (response.statusCode === 200) {
-      const character = JSON.parse(body);
-      console.log(character.name); // Print the character's name
-      fetchCharacters(characters, idx + 1); // Recurse for the next character
-    } else {
-      console.error('Failed to retrieve character, status code:', response.statusCode);
-    }
-  });
-}
-
-// Get the Movie ID from the command-line argument
+// The first argument passed is the Movie ID
 const movieId = process.argv[2];
-if (!movieId) {
-  console.error('Usage: ./0-starwars_characters.js <Movie ID>');
-  process.exit(1);
-}
 
-// Construct the URL for the Star Wars API
-const url = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
+// Base URL for the Star Wars API
+const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
-// Fetch the movie data based on the Movie ID
-request(url, (err, response, body) => {
-  if (err) {
-    console.error(err);
-  } else if (response.statusCode === 200) {
-    const movieData = JSON.parse(body); // Parse the movie data
-    const characters = movieData.characters; // Get the list of character URLs
-    fetchCharacters(characters, 0); // Start fetching characters in order
-  } else {
-    console.error('Failed to retrieve movie, status code:', response.statusCode);
+// Make a request to the API
+request(apiUrl, (error, response, body) => {
+  if (error) {
+    console.error(error);
+    return;
   }
+
+  // Parse the body as JSON
+  const film = JSON.parse(body);
+
+  // Get the list of character URLs
+  const characters = film.characters;
+
+  // Create an array of promises for each character request
+  const promises = characters.map(characterUrl => {
+    return new Promise((resolve, reject) => {
+      request(characterUrl, (charError, charResponse, charBody) => {
+        if (charError) {
+          reject(charError);
+        } else {
+          const character = JSON.parse(charBody);
+          resolve(character.name);
+        }
+      });
+    });
+  });
+
+  // Use Promise.all to wait for all requests to finish and preserve the order
+  Promise.all(promises)
+    .then(characterNames => {
+      characterNames.forEach(name => {
+        console.log(name);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
 });
