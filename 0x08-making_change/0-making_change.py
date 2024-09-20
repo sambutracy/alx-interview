@@ -29,14 +29,3 @@ def makeChange(coins, total):
 
     # If dp[total] is still infinity, return -1 (means total can't be met)
     return dp[total] if dp[total] != float('inf') else -1
-    if __name__ == "__main__":
-
-        if len(sys.argv) != 3:
-            print("Usage: {} <total> <coin1,coin2,...>".format(sys.argv[0]))
-            sys.exit(1)
-
-        total = int(sys.argv[1])
-        coins = list(map(int, sys.argv[2].split(',')))
-
-        result = makeChange(coins, total)
-        print(result)
