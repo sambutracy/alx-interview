@@ -1,24 +1,24 @@
 #!/usr/bin/python3
-import sys
-
 """
 This module provides a function to determine the minimum number of coins
 needed to make a given total amount.
+"""
+import sys
 
-Functions:
+
+def makeChange(coins, total):
+    """
+    Functions:
     makeChange(coins, total):
         Determines the minimum number of coins needed to make the given total.
 
-Usage:
+    Usage:
     Run the script with the following command:
     python3 0-making_change.py <total> <coin1,coin2,...>
 
     Example:
         python3 0-making_change.py 11 1,2,5
-"""
-
-
-def makeChange(coins, total):
+    """
     if total <= 0:
         return 0
 
